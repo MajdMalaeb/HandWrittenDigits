@@ -8,7 +8,7 @@ Written in java/swing. Using k-nearest neighbors algorithm with Euclidean or Man
 ## Installation
 
 ```sh
--Run HWML.jar in the build folder
+-Run HWML.jar in the jar folder
 -Or Use Netbeans to open the project and run it
 ```
 
