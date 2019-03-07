@@ -298,6 +298,7 @@ public class MnistIFrame extends JInternalFrame {
 
         stopBtn.addActionListener((e) -> {
             stop = true;
+            pauseBtn.setText("Pause");
         });
 
         pauseBtn.addActionListener((e) -> {

@@ -126,6 +126,7 @@ public class SourceFrame extends JInternalFrame {
                     String path = fileChooser.getSelectedFiles()[0].getAbsolutePath();
                     ImageIO.write(drawLabel.getImage(), "png", new File(path + (path.endsWith(".png") ? "" : ".png")));
                 } catch (IOException ex) {
+                     GUIEventHandler.GetInstance().log(new LogIFrame.LogMessage("Saving Image", ex));
                 }
             }
 
