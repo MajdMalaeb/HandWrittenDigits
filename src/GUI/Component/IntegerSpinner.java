@@ -30,40 +30,50 @@ public class IntegerSpinner extends JSpinner {
         updateJSpinner();
     }
 
-    public int getMinimum() {
-        return (int) model.getMinimum();
-    }
-
-    public int getMaximum() {
-        return (int) model.getMaximum();
-    }
-
     @Override
     public Object getNextValue() {
         Object o = super.getNextValue();
-        return o != null ? o : getMaximum();
+        return o != null ? o : model.getMaximum();
     }
 
     @Override
     public Object getPreviousValue() {
         Object o = super.getPreviousValue();
-        return o != null ? o : getMinimum();
+        return o != null ? o : model.getMinimum();
     }
 
+    /**
+     * set the Maximum Value and update the current one
+     *
+     * @param max
+     */
     public void setMaximum(int max) {
         setValue(Math.min(max, (int) getValue()));
         model.setMaximum(max);
     }
 
+    /**
+     * set the Minimum Value and update the current one
+     *
+     * @param min
+     */
     public void setMinimum(int min) {
         setValue(Math.max(min, (int) getValue()));
         model.setMinimum(min);
     }
 
+    /**
+     * Return the Integer value
+     *
+     * @return super.getValue()
+     */
     public int getIntegerValue() {
         return (int) super.getValue();
     }
 
+    /**
+     * Change th UI of JSpinner
+     */
     private void updateJSpinner() {
         setUI(new BasicSpinnerUI() {
             @Override
@@ -79,11 +89,12 @@ public class IntegerSpinner extends JSpinner {
                 installNextButtonListeners(component);
                 return component;
             }
+
             private Component createButton(String text) {
-                    JButton arrowButton = new JButton(text);
-                    arrowButton.setFocusable(false);
-                    return arrowButton;
-                }
+                JButton arrowButton = new JButton(text);
+                arrowButton.setFocusable(false);
+                return arrowButton;
+            }
         });
         addMouseWheelListener((e) -> {
             if (isEnabled()) {

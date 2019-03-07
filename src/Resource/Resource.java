@@ -23,26 +23,61 @@ public class Resource {
 
     private static String currentPath = ".";
 
+    /**
+     * Read a resource as InputStream
+     *
+     * @param name name of the resource
+     * @return
+     */
     public static InputStream getResource(String name) {
         return Resource.class.getResourceAsStream(name);
     }
 
+    /**
+     * Read and return the Training Image File as byte array
+     *
+     * @return array of all the bytes
+     * @throws IOException
+     */
     public static byte[] getTrainingImages() throws IOException {
         return getFile("train-images.idx3-ubyte");
     }
 
+    /**
+     * Read and return the Training label File as byte array
+     *
+     * @return array of all the bytes
+     * @throws IOException
+     */
     public static byte[] getTrainingLabels() throws IOException {
         return getFile("train-labels.idx1-ubyte");
     }
 
+    /**
+     * Read and return the Testing Image File as byte array
+     *
+     * @return array of all the bytes
+     * @throws IOException
+     */
     public static byte[] getTestingImages() throws IOException {
         return getFile("t10k-images.idx3-ubyte");
     }
 
+    /**
+     * Read and return the Testing label File as byte array
+     *
+     * @return array of all the bytes
+     * @throws IOException
+     */
     public static byte[] getTestingLabels() throws IOException {
         return getFile("t10k-labels.idx1-ubyte");
     }
 
+    /**
+     * Get the background Image from resource
+     *
+     * @return Image
+     */
     public static Image getBackground() {
         try {
             return ImageIO.read(getResource("bg.png"));
@@ -51,6 +86,13 @@ public class Resource {
         }
     }
 
+    /**
+     * Check and Read a specific file as a byte array
+     *
+     * @param name name of the file
+     * @return array of all the bytes
+     * @throws IOException
+     */
     private static byte[] getFile(String name) throws IOException {
         File file = new File(currentPath + "/" + name);
         if (!file.exists()) {

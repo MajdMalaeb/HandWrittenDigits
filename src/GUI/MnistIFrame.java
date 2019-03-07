@@ -62,23 +62,19 @@ public class MnistIFrame extends JInternalFrame {
         addActions();
     }
 
-    private JMenuBar createMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-        showImageChb = new JCheckBoxMenuItem("Show Images", true);
-        menuBar.add(showImageChb);
-        return menuBar;
-    }
-
+    /**
+     * Building the Interface
+     */
     private void buildGUI() {
 
         euclideanRBtn = new JRadioButton("Euclidean");
-        euclideanRBtn.setName(Distance.Methode.Euclidean.name());
+        euclideanRBtn.setName(Distance.Method.Euclidean.name());
         euclideanPSNRRBtn = new JRadioButton("Euclidean PSNR");
-        euclideanPSNRRBtn.setName(Distance.Methode.EuclideanPSNR.name());
+        euclideanPSNRRBtn.setName(Distance.Method.EuclideanPSNR.name());
         manhattanRBtn = new JRadioButton("Manhattan");
-        manhattanRBtn.setName(Distance.Methode.Manhattan.name());
+        manhattanRBtn.setName(Distance.Method.Manhattan.name());
         manhattanPSNRRBtn = new JRadioButton("Manhattan PSNR");
-        manhattanPSNRRBtn.setName(Distance.Methode.ManhattanPSNR.name());
+        manhattanPSNRRBtn.setName(Distance.Method.ManhattanPSNR.name());
 
         ButtonGroup radioGroup1 = new ButtonGroup();
         radioGroup1.add(euclideanRBtn);
@@ -94,7 +90,7 @@ public class MnistIFrame extends JInternalFrame {
             neighborImages[i] = new GraphJLabel(mainWidth / 2);
         }
         resultLabel = new JLabel(" ", JLabel.CENTER);
-        resultLabel.setFont(new Font(resultLabel.getName(), Font.PLAIN, 25));
+        resultLabel.setFont(new Font(resultLabel.getName(), Font.PLAIN, 20));
 
         JLabel trainingLabel = new JLabel("Training Samples");
         JLabel testingLabel = new JLabel("Testing Samples");
@@ -223,10 +219,18 @@ public class MnistIFrame extends JInternalFrame {
                         .addComponent(progressBar, 28, 28, 28)
                 )
                 .addComponent(mnistConfigPanel));
-        setJMenuBar(createMenuBar());
+
+        JMenuBar menuBar = new JMenuBar();
+        showImageChb = new JCheckBoxMenuItem("Show Images", true);
+        menuBar.add(showImageChb);
+        setJMenuBar(menuBar);
+
         pack();
     }
 
+    /**
+     * add Listener to JSpinner and JCheckBox
+     */
     private void addListener() {
         trainingSpin.addChangeListener((e) -> {
             kSpin.setMaximum(trainingSpin.getIntegerValue() / 2);
@@ -257,11 +261,19 @@ public class MnistIFrame extends JInternalFrame {
         });
     }
 
+    /**
+     * Clear all images
+     */
     private void clearImages() {
         testingImage.clear();
         clearNeighbor(0);
     }
 
+    /**
+     * Clear only the neighbor according the K value
+     *
+     * @param K
+     */
     private void clearNeighbor(int K) {
 
         for (int i = K; i < 5; i++) {
@@ -269,6 +281,10 @@ public class MnistIFrame extends JInternalFrame {
         }
     }
 
+    /**
+     *
+     * Adding Actions to JButtons
+     */
     private void addActions() {
         trainingBtn.addActionListener((e) -> {
             loadMNISTDataSet();
@@ -290,19 +306,22 @@ public class MnistIFrame extends JInternalFrame {
         });
 
         euclideanRBtn.addActionListener((e) -> {
-            knn.setMethode(Distance.Methode.valueOf(euclideanRBtn.getName()));
+            knn.setMethode(Distance.Method.valueOf(euclideanRBtn.getName()));
         });
         manhattanRBtn.addActionListener((e) -> {
-            knn.setMethode(Distance.Methode.valueOf(manhattanRBtn.getName()));
+            knn.setMethode(Distance.Method.valueOf(manhattanRBtn.getName()));
         });
         euclideanPSNRRBtn.addActionListener((e) -> {
-            knn.setMethode(Distance.Methode.valueOf(euclideanPSNRRBtn.getName()));
+            knn.setMethode(Distance.Method.valueOf(euclideanPSNRRBtn.getName()));
         });
         manhattanPSNRRBtn.addActionListener((e) -> {
-            knn.setMethode(Distance.Methode.valueOf(manhattanPSNRRBtn.getName()));
+            knn.setMethode(Distance.Method.valueOf(manhattanPSNRRBtn.getName()));
         });
     }
 
+    /**
+     * Load MNIST DataSet Worker
+     */
     private void loadMNISTDataSet() {
         if (sw != null) {
             sw.cancel(true);
@@ -365,6 +384,11 @@ public class MnistIFrame extends JInternalFrame {
         sw.execute();
     }
 
+    /**
+     * Search for Neighbor Worker
+     *
+     * @param next Searching one by one or All
+     */
     private void searchKNN(boolean next) {
         if (sw != null) {
             sw.cancel(true);
@@ -410,6 +434,7 @@ public class MnistIFrame extends JInternalFrame {
                     recognitionCount = 0.0;
 
                 } catch (Exception x) {
+                    GUIEventHandler.GetInstance().log(new LogIFrame.LogMessage("Knn Searching", x));
                 }
                 return "";
             }
@@ -422,7 +447,6 @@ public class MnistIFrame extends JInternalFrame {
                 progressBar.setValue(0);
                 paused = false;
                 stop = false;
-                //System.gc();
             }
         };
         sw.execute();
@@ -440,6 +464,15 @@ public class MnistIFrame extends JInternalFrame {
         return getFormattedText(null, null, time, ", ");
     }
 
+    /**
+     * Get A Formatted Text
+     *
+     * @param result
+     * @param expected
+     * @param time
+     * @param separator
+     * @return
+     */
     private String getFormattedText(String result, String expected, String time, String separator) {
         return (result == null ? "" : ("Result: " + result + "<br>"))
                 + (expected == null ? "" : ("Expected: " + expected + "<br>"))
@@ -449,11 +482,17 @@ public class MnistIFrame extends JInternalFrame {
                 + separator
                 + "K: " + knn.getK()
                 + separator
-                + "Methode: " + knn.getMethode().name()
+                + "Methode: " + knn.getMethod().name()
                 + separator
                 + "Time: " + time;
     }
 
+    /**
+     * Find the neighbors of one Sample and return the time needed to find them
+     *
+     * @param sample The sample to compare
+     * @return Time in ms
+     */
     public long searchOne(Sample sample) {
         if (loader == null) {
             return 0;
@@ -486,6 +525,11 @@ public class MnistIFrame extends JInternalFrame {
         return timer.getTime();
     }
 
+    /**
+     * Disable or enable everything
+     *
+     * @param enable
+     */
     private void disableWhileLoading(boolean enable) {
 
         euclideanPSNRRBtn.setEnabled(enable);

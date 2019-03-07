@@ -33,6 +33,9 @@ public class LogIFrame extends JInternalFrame {
     private static final Style redStyle = textPane.addStyle("redStyle", null);
     private static final Style greenStyle = textPane.addStyle("greenStyle", null);
 
+    /**
+     * Installing some Style Constant
+     */
     static {
         StyleConstants.setForeground(blackStyle, Color.BLACK);
         StyleConstants.setForeground(blueStyle, Color.BLUE);
@@ -45,6 +48,7 @@ public class LogIFrame extends JInternalFrame {
         buildGUI();
         setPreferredSize(new Dimension(w, h));
         setSize(w, h);
+        //Adding a property listener to the GUIEventHandler Instance
         GUIEventHandler.GetInstance().addPropertyChangeListener((evt) -> {
             if (GUIEventHandler.event.log.name().equals(evt.getPropertyName())) {
                 log((LogMessage) evt.getNewValue());
@@ -52,6 +56,9 @@ public class LogIFrame extends JInternalFrame {
         });
     }
 
+    /**
+     * building the Interface
+     */
     private void buildGUI() {
         textPane.setEditable(false);
         textPane.addMouseListener(new MouseAdapter() {
@@ -67,6 +74,11 @@ public class LogIFrame extends JInternalFrame {
         pack();
     }
 
+    /**
+     * Log and insert any message to a StyledDocument
+     *
+     * @param logMessage Message to insert
+     */
     public final synchronized void log(LogMessage logMessage) {
         try {
             doc.insertString(doc.getLength(), logMessage.getSender() + ": ", blueStyle);

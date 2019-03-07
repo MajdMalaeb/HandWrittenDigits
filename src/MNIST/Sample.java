@@ -25,10 +25,24 @@ public class Sample {
         this.data = new int[r * c];
     }
 
+    /**
+     * Get a pixel value at a specific row and column
+     *
+     * @param row
+     * @param col
+     * @return
+     */
     public int getPix(int row, int col) {
         return data[(r * row) + col];
     }
 
+    /**
+     * Set a pixel value at a specific row and column
+     *
+     * @param row
+     * @param col
+     * @param value
+     */
     public void setPix(int row, int col, int value) {
         int index = (r * row) + col;
         data[index] = value;
@@ -38,34 +52,75 @@ public class Sample {
         }
     }
 
+    /**
+     * Get the index of the first non empty pixel
+     *
+     * @return
+     */
     public int getFirstIndex() {
         return Math.max(firstIndex, 0);
     }
 
+    /**
+     * Get the index of the last non empty pixel
+     *
+     * @return
+     */
     public int getLastIndex() {
         return Math.min(lastIndex, lastIndex - 1);
     }
 
+    /**
+     * Get All the pixels
+     *
+     * @return
+     */
     public int[] getData() {
         return data;
     }
 
+    /**
+     * Get the Label
+     *
+     * @return
+     */
     public int getLabel() {
         return label;
     }
 
+    /**
+     * Set the label
+     *
+     * @param label
+     */
     public void setLabel(int label) {
         this.label = label;
     }
 
+    /**
+     * Get row Count
+     *
+     * @return
+     */
     public int getRowsNumb() {
         return r;
     }
 
+    /**
+     * Get column count
+     *
+     * @return
+     */
     public int getColNumb() {
         return c;
     }
 
+    /**
+     * Get an Instance using an External Image
+     *
+     * @param image An External Image
+     * @return
+     */
     public static Sample GetInstance(BufferedImage image) {
         Sample sample = new Sample(MNIST.TRAINING_IMAGE_WIDTH, MNIST.TESTING_IMAGE_HEIGHT);
         image = ImageTools.resizeImage(image, sample.getRowsNumb(), sample.getColNumb());

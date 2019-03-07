@@ -6,6 +6,7 @@
 package MNIST;
 
 /**
+ * A Comparable Class Containing a Sample and Distance
  *
  * @author Majd Malaeb
  */
@@ -19,14 +20,30 @@ public class DistanceSample implements Comparable<DistanceSample> {
         this.sample = sample;
     }
 
+    /**
+     * Get the Distance
+     *
+     * @return
+     */
     public double getDistance() {
         return distance;
     }
 
+    /**
+     * Get the Sample
+     *
+     * @return
+     */
     public Sample getSample() {
         return sample;
     }
 
+    /**
+     * Comparing using the distance
+     *
+     * @param o
+     * @return
+     */
     @Override
     public int compareTo(DistanceSample o) {
         return Double.compare(this.distance, o.getDistance());

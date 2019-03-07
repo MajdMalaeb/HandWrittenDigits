@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
+ * An ArrayList that can store the initCapacity and fire an event every time an
+ * object is added to it
  *
  * @author Majd Malaeb
  * @param <T>

@@ -43,6 +43,9 @@ public class SourceFrame extends JInternalFrame {
 
     }
 
+    /**
+     * Building the interface
+     */
     private void buildGUI() {
         drawLabel = new GraphJLabel(280, 280, true);
         drawLabel.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
@@ -59,7 +62,7 @@ public class SourceFrame extends JInternalFrame {
         JPanel mainPanel = new JPanel();
 
         drawLabel.setPreferredSize(new Dimension(280, 280));
-        setJMenuBar(createMenuBar());
+        createMenuBar();
         imagePanel.add(drawLabel);
 
         buttonPanel.add(clearBtn);
@@ -76,7 +79,10 @@ public class SourceFrame extends JInternalFrame {
 
     }
 
-    private JMenuBar createMenuBar() {
+    /**
+     * create the menu bar
+     */
+    private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         JMenuItem openImageItem = new JMenuItem("Open Image");
         openImageItem.setIcon(UIManager.getIcon("FileView.fileIcon"));
@@ -89,9 +95,12 @@ public class SourceFrame extends JInternalFrame {
             }
         });
         menuBar.add(openImageItem);
-        return menuBar;
+        setJMenuBar(menuBar);
     }
 
+    /**
+     * Add listeners
+     */
     private void addComponentListener() {
         clearBtn.addActionListener((e) -> {
             resetImageLabel();
@@ -130,28 +139,37 @@ public class SourceFrame extends JInternalFrame {
         });
     }
 
+    /**
+     * Clear the Image
+     */
     private void resetImageLabel() {
         drawLabel.clear();
     }
 
+    /**
+     * Enable or Disable the buttons
+     *
+     * @param enable
+     */
     private void setEnable(boolean enable) {
         saveBtn.setEnabled(enable);
         clearBtn.setEnabled(enable);
         setTestEnable(enable);
     }
 
+    /**
+     * Enable or Disable the test button
+     *
+     * @param enable
+     */
     private void setTestEnable(boolean enable) {
         testBtn.setEnabled(enable && (files == null || (index < files.length)));
         testBtn.setText("Test (" + (files == null ? "1/1)" : (index + 1) + "/" + files.length + ")"));
     }
 
-    private void incIndex() {
-        index++;
-        if (index >= files.length) {
-            index = 0;
-        }
-    }
-
+    /**
+     * display the next image and increase the Index
+     */
     private void testNextImage() {
         if (files != null) {
             openNextImage();
@@ -159,6 +177,19 @@ public class SourceFrame extends JInternalFrame {
         }
     }
 
+    /**
+     * increase or reset the index for the next image
+     */
+    private void incIndex() {
+        index++;
+        if (index >= files.length) {
+            index = 0;
+        }
+    }
+
+    /**
+     * Read and display the next image
+     */
     private void openNextImage() {
         if (files != null) {
             try {

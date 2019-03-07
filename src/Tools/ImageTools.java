@@ -36,6 +36,15 @@ public class ImageTools {
         return image;
     }
 
+    /**
+     * Draw lines on a specific graphics2d
+     *
+     * @param gd
+     * @param row row count
+     * @param col column count
+     * @param w width
+     * @param h heigh
+     */
     public static void createGraphImage(Graphics2D gd, int row, int col, int w, int h) {
         int newPixSizeW = w / col;
         int newPixSizeH = h / row;
@@ -54,6 +63,16 @@ public class ImageTools {
         return resizeImage(img, w, h, w, h);
     }
 
+    /**
+     * Resize and center a buffer image inside a new image
+     *
+     * @param img Image to resize
+     * @param w Width of the resized image
+     * @param h Height of the resized image
+     * @param imgW Width of the old Image inside the resized image
+     * @param imgH Height of the old Image inside the resized image
+     * @return
+     */
     public static BufferedImage resizeImage(Image img, int w, int h, int imgW, int imgH) {
         BufferedImage resizedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = resizedImage.createGraphics();
@@ -61,11 +80,21 @@ public class ImageTools {
         hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHints(hints);
+        //center the image
         g2d.drawImage(img, (w - imgW) / 2, (h - imgH) / 2, imgW, imgH, null);
         g2d.dispose();
         return resizedImage;
     }
 
+    /**
+     * Resize Image by expanding each pixel
+     *
+     * @param w Width of the resized image
+     * @param h Height of the resized image
+     * @param sample sample to resize
+     * @param drawString
+     * @return
+     */
     public static BufferedImage resizePixels(int w, int h, Sample sample, boolean drawString) {
         int rowNumb = sample.getRowsNumb();
         int colNumb = sample.getColNumb();
@@ -75,6 +104,7 @@ public class ImageTools {
         BufferedImage resizedImage = new BufferedImage(newPixSizeW * rowNumb, newPixSizeH * rowNumb, BufferedImage.TYPE_INT_ARGB);
         Graphics2D gd = resizedImage.createGraphics();
 
+        //draw each pixel as a rectangle and add a Gray border
         for (int c = 0; c < colNumb; c++) {
             for (int r = 0; r < rowNumb; r++) {
                 int pic = 255 - sample.getPix(c, r);
@@ -84,6 +114,7 @@ public class ImageTools {
                 gd.drawRect(newPixSizeH * r, c * newPixSizeW, newPixSizeW, newPixSizeH);
             }
         }
+        //Draw the label
         if (drawString) {
             String txt = sample.getLabel() + "";
             gd.setColor(Color.BLUE);
@@ -94,10 +125,24 @@ public class ImageTools {
         return resizedImage;
     }
 
+    /**
+     * Remove all white pixels and invert the Image if the first pixel is not
+     * white
+     *
+     * @param img
+     * @return
+     */
     public static BufferedImage removeWhite(BufferedImage img) {
         return removeWhiteAndInvert(img, img.getRGB(0, 0) < -12000000);
     }
 
+    /**
+     * Remove all white pixels and invert the Image
+     *
+     * @param img
+     * @param invert
+     * @return
+     */
     private static BufferedImage removeWhiteAndInvert(BufferedImage img, boolean invert) {
 
         int w = img.getWidth();
@@ -112,7 +157,7 @@ public class ImageTools {
                             255 - col.getGreen(),
                             255 - col.getBlue());
                 }
-                if (col.getRGB() < -12000000) {
+                if (col.getRGB() < -12000000) {//Store the pixel if it's not white
                     result.setRGB(x, y, col.getRGB());
                 }
             }

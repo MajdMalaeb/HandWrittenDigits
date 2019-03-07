@@ -40,6 +40,12 @@ public class Timer {
         return toString(getTime());
     }
 
+    /**
+     * Convert nanoSecs to String
+     *
+     * @param nanoSecs
+     * @return
+     */
     public static String toString(long nanoSecs) {
         int minutes = (int) (nanoSecs / 60000000000.0);
         int seconds = (int) (nanoSecs / 1000000000.0) - (minutes * 60);

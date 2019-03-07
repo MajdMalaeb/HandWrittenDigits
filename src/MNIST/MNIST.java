@@ -42,6 +42,12 @@ public class MNIST {
         testingSamples = new ArrayListPlus<>(testingCount);
     }
 
+    /**
+     * Load the Training Set
+     *
+     * @return Time took to load the set
+     * @throws Exception
+     */
     public synchronized long loadTrainingSamples() throws Exception {
         Timer timer = new Timer();
         if (!trainingSamples.isEmpty()) {
@@ -53,6 +59,7 @@ public class MNIST {
         byte[] trainingImagesIN = Resource.getTrainingImages();
         byte[] trainingLabelsIN = Resource.getTrainingLabels();
         timer.start();
+        // Read the MNIST Configuration and check it
         if (!(check32Bits(trainingImagesIN, 0, TRAINING_IMAGES_MAGIC_NUMBER)
                 && check32Bits(trainingImagesIN, 4, TRAINING_ITEMS_COUNT)
                 && check32Bits(trainingImagesIN, 8, TRAINING_IMAGE_HEIGHT)
@@ -63,6 +70,7 @@ public class MNIST {
 
         }
 
+        //Log the result
         GUIEventHandler.GetInstance().log(logMessage.setMessage("Training images magic number: " + TRAINING_IMAGES_MAGIC_NUMBER).setStyle(LogIFrame.LogMessage.Styles.Green));
         GUIEventHandler.GetInstance().log(logMessage.setMessage("Training images count: " + trainingSamples.getInitialCapacity()));
         GUIEventHandler.GetInstance().log(logMessage.setMessage("Training images height: " + TRAINING_IMAGE_HEIGHT));
@@ -71,6 +79,7 @@ public class MNIST {
         GUIEventHandler.GetInstance().log(logMessage.setMessage("Training labels magic number: " + TRAINING_LABELS_MAGIC_NUMBER));
         GUIEventHandler.GetInstance().log(logMessage.setMessage("Training labels count: " + trainingSamples.getInitialCapacity()));
 
+        //Store the images as samples in the training list
         int index = 16;
         for (int i = 0; i < trainingSamples.getInitialCapacity(); i++) {
             Sample sample = new Sample(TRAINING_IMAGE_HEIGHT, TRAINING_IMAGE_WIDTH);
@@ -84,6 +93,8 @@ public class MNIST {
             trainingSamples.add(sample);
         }
         timer.stop();
+
+        //Fire an event and log That the training Set is loaded
         GUIEventHandler.GetInstance().setTrainingSetLoaded(true);
         GUIEventHandler.GetInstance().log(logMessage.setMessage("Training Set Loaded").setStyle(null));
         return timer.getTime();
@@ -99,6 +110,7 @@ public class MNIST {
         byte[] testingLabelsIN = Resource.getTestingLabels();
 
         timer.start();
+        // Read the MNIST Configuration and check it
         if (!(check32Bits(testingImagesIN, 0, TESTING_IMAGES_MAGIC_NUMBER)
                 && check32Bits(testingImagesIN, 4, TESTING_ITEMS_COUNT)
                 && check32Bits(testingImagesIN, 8, TESTING_IMAGE_HEIGHT)
@@ -108,6 +120,8 @@ public class MNIST {
             throw new IOException("Please check the testing set file");
 
         }
+
+        //Log the result
         GUIEventHandler.GetInstance().log(logMessage.setMessage("Testing images magic number: " + TESTING_IMAGES_MAGIC_NUMBER).setStyle(LogIFrame.LogMessage.Styles.Green));
         GUIEventHandler.GetInstance().log(logMessage.setMessage("Testing images count: " + testingSamples.getInitialCapacity()));
         GUIEventHandler.GetInstance().log(logMessage.setMessage("Testing images height: " + TESTING_IMAGE_HEIGHT));
@@ -115,6 +129,8 @@ public class MNIST {
 
         GUIEventHandler.GetInstance().log(logMessage.setMessage("Testing labels magic number: " + TESTING_LABELS_MAGIC_NUMBER));
         GUIEventHandler.GetInstance().log(logMessage.setMessage("Testing labels count: " + testingSamples.getInitialCapacity()));
+
+        //Store the images as samples in the testing list
         int index = 16;
         for (int i = 0; i < testingSamples.getInitialCapacity(); i++) {
             Sample sample = new Sample(TESTING_IMAGE_HEIGHT, TESTING_IMAGE_WIDTH);
@@ -128,32 +144,65 @@ public class MNIST {
             testingSamples.add(sample);
         }
         timer.stop();
+
+        //Fire an event and log That the training Set is loaded
         GUIEventHandler.GetInstance().setTestingSetLoaded(true);
         GUIEventHandler.GetInstance().log(logMessage.setMessage("Testing Set Loaded").setStyle(null));
         return timer.getTime();
     }
 
+    /**
+     * Get the Training Samples
+     *
+     * @return
+     */
     public ArrayListPlus<Sample> getTrainingSamples() {
         return trainingSamples;
     }
 
+    /**
+     * Get the Testing Samples
+     *
+     * @return
+     */
     public ArrayListPlus<Sample> getTestingSamples() {
         return testingSamples;
     }
 
-    private boolean check32Bits(byte[] in, int index, int number) throws Exception {
+    /**
+     * Read 32 bits and compare it to an int number
+     *
+     * @return
+     */
+    private boolean check32Bits(byte[] in, int index, int number) {
         return number == fromByteArray(in, index);
     }
 
-    int fromByteArray(byte[] bytes, int start) {
+    /**
+     * Convert 32 bits to int from an array
+     *
+     * @param bytes
+     * @param start
+     * @return
+     */
+    private int fromByteArray(byte[] bytes, int start) {
         return bytes[start] << 24 | (bytes[start + 1] & 0xFF) << 16 | (bytes[start + 2] & 0xFF) << 8 | (bytes[start + 3] & 0xFF);
     }
 
+    /**
+     * clear the Samples
+     */
     public void dispose() {
         trainingSamples.clear();
         testingSamples.clear();
     }
 
+    /**
+     * Clear and create the new Lists
+     *
+     * @param trainingCount
+     * @param testingCount
+     */
     public void dispose(int trainingCount, int testingCount) {
         dispose();
         trainingSamples = new ArrayListPlus<>(trainingCount);

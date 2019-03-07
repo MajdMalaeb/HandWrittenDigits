@@ -30,7 +30,7 @@ import javax.swing.SwingUtilities;
 public class GraphJLabel extends JLabel {
 
     private final Color color = Color.BLACK;
-    private final int strokeSize = 25;
+    private final int strokeSize = 20;
     private final Stroke stroke = new BasicStroke(strokeSize, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
     private final ArrayList<Point> tempPoints = new ArrayList<>(), toCenter = new ArrayList<>();
     private BufferedImage tempImage;
@@ -57,6 +57,11 @@ public class GraphJLabel extends JLabel {
         this(w, h, false);
     }
 
+    /**
+     * Limit the size to one Dimension
+     *
+     * @param d
+     */
     private void limitSize(Dimension d) {
         setPreferredSize(d);
         setMinimumSize(d);
@@ -64,10 +69,15 @@ public class GraphJLabel extends JLabel {
         setSize(d);
     }
 
+    /**
+     * add listener to mouse events if it's a drawable Label
+     */
     private void addListener() {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+
+                //!drawable is here so we can prevent the user from drawing if he's reading a displaying an external image on the same Jlabel
                 if (!drawable || !SwingUtilities.isLeftMouseButton(e)) {
                     return;
                 }
@@ -102,6 +112,11 @@ public class GraphJLabel extends JLabel {
         });
     }
 
+    /**
+     * Draw the image and the new points if exists
+     *
+     * @param g
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -113,6 +128,11 @@ public class GraphJLabel extends JLabel {
         drawPoints(g);
     }
 
+    /**
+     * add a point to the point list and checking if it's inside the JLabel
+     *
+     * @param p
+     */
     private void addPoint(Point p) {
         p.x = Math.min(Math.max(0, p.x), getWidth());
         p.y = Math.min(Math.max(0, p.y), getHeight());
@@ -127,6 +147,14 @@ public class GraphJLabel extends JLabel {
         drawPoints(g, tempPoints, offsetX, offsetY);
     }
 
+    /**
+     * draw the points on a specific graphics using offset
+     *
+     * @param g graphics
+     * @param points point list
+     * @param offsetX x offset
+     * @param offsetY y offset
+     */
     private void drawPoints(Graphics g, ArrayList<Point> points, int offsetX, int offsetY) {
         if (points.size() < 2) {
             return;
@@ -144,6 +172,9 @@ public class GraphJLabel extends JLabel {
         }
     }
 
+    /**
+     * Center the Image Using the List of points
+     */
     public void centerImage() {
         if (toCenter.isEmpty()) {
             return;
@@ -171,6 +202,9 @@ public class GraphJLabel extends JLabel {
         repaint();
     }
 
+    /**
+     * clear the points and the image
+     */
     public final void clear() {
         toCenter.clear();
         tempImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -178,14 +212,24 @@ public class GraphJLabel extends JLabel {
         repaint();
     }
 
+    /**
+     * Get the tempImage
+     *
+     * @return tempImage
+     */
     public BufferedImage getImage() {
         return tempImage;
     }
 
-    public void setImage(BufferedImage bImg) {
+    /**
+     * Set an external image
+     *
+     * @param img
+     */
+    public void setImage(BufferedImage img) {
         clear();
         Graphics2D g2 = tempImage.createGraphics();
-        g2.drawImage(bImg, 0, 0, getWidth(), getHeight(), null);
+        g2.drawImage(img, 0, 0, getWidth(), getHeight(), null);
         g2.dispose();
         drawable = false;
         repaint();

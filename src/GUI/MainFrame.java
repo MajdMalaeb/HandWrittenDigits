@@ -12,9 +12,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.beans.PropertyVetoException;
 import java.io.File;
-import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.swing.DefaultDesktopManager;
 import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
@@ -48,6 +46,9 @@ public class MainFrame extends JFrame {
         createLogIFrame(w / 2, 180);
     }
 
+    /**
+     * Build the Main Interface
+     */
     private void buildGUI() {
         desktopPane = new JDesktopPane() {
             final Image image = Resource.getBackground();
@@ -55,36 +56,38 @@ public class MainFrame extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
+                //drawing the background 
                 g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
             }
         };
+        //Prevent the Internal frame from moving if the property is fixed
+//        DefaultDesktopManager defaultDesktopManager = new DefaultDesktopManager() {
+//            @Override
+//            public void beginDraggingFrame(JComponent f) {
+//                if (!"fixed".equals(f.getClientProperty("dragMode"))) {
+//                    super.beginDraggingFrame(f);
+//                }
+//            }
+//
+//            @Override
+//            public void dragFrame(JComponent f, int newX, int newY) {
+//                if (!"fixed".equals(f.getClientProperty("dragMode"))) {
+//                    super.dragFrame(f, newX, newY);
+//                }
+//            }
+//
+//            @Override
+//            public void endDraggingFrame(JComponent f) {
+//                if (!"fixed".equals(f.getClientProperty("dragMode"))) {
+//                    super.endDraggingFrame(f);
+//                }
+//            }
+//        };
+//        desktopPane.setDesktopManager(defaultDesktopManager);
 
-        DefaultDesktopManager defaultDesktopManager = new DefaultDesktopManager() {
-            @Override
-            public void beginDraggingFrame(JComponent f) {
-                if (!"fixed".equals(f.getClientProperty("dragMode"))) {
-                    super.beginDraggingFrame(f);
-                }
-            }
-
-            @Override
-            public void dragFrame(JComponent f, int newX, int newY) {
-                if (!"fixed".equals(f.getClientProperty("dragMode"))) {
-                    super.dragFrame(f, newX, newY);
-                }
-            }
-
-            @Override
-            public void endDraggingFrame(JComponent f) {
-                if (!"fixed".equals(f.getClientProperty("dragMode"))) {
-                    super.endDraggingFrame(f);
-                }
-            }
-        };
-        desktopPane.setDesktopManager(defaultDesktopManager);
         desktopPane.setDragMode(JDesktopPane.LIVE_DRAG_MODE);
         setContentPane(desktopPane);
-        setJMenuBar(createMenuBar());
+        createMenuBar();
         pack();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(w, h);
@@ -94,12 +97,17 @@ public class MainFrame extends JFrame {
         setResizable(false);
     }
 
-    private JMenuBar createMenuBar() {
+    /**
+     * Creating the Menu bar
+     */
+    private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         JMenuItem mnistMenuItem = new JMenuItem("Open MNIST Frame");
         JMenuItem sourceMenuItem = new JMenuItem("Open Source Frame");
         mnistMenuItem.setMaximumSize(new Dimension(125, Short.MAX_VALUE));
         sourceMenuItem.setMaximumSize(new Dimension(125, Short.MAX_VALUE));
+
+        // Selecting or creating a new internal frame
         mnistMenuItem.addActionListener((e) -> {
             if (!mnistIsOpen) {
                 createMNISTIFrame();
@@ -116,9 +124,12 @@ public class MainFrame extends JFrame {
         });
         menuBar.add(sourceMenuItem);
         menuBar.add(mnistMenuItem);
-        return menuBar;
+        setJMenuBar(menuBar);
     }
 
+    /**
+     * Creating the MNIST Internal Interface
+     */
     private void createMNISTIFrame() {
         MnistIFrame mnistIFrame = new MnistIFrame();
         mnistIFrame.addInternalFrameListener(new InternalFrameAdapter() {
@@ -141,6 +152,9 @@ public class MainFrame extends JFrame {
 
     }
 
+    /**
+     * Creating the Source Internal Interface
+     */
     private void createSourceFrame() {
         SourceFrame sourceFrame = new SourceFrame(this);
         sourceFrame.addInternalFrameListener(new InternalFrameAdapter() {
@@ -162,6 +176,9 @@ public class MainFrame extends JFrame {
         desktopPane.setSelectedFrame(sourceFrame);
     }
 
+    /**
+     * Creating the Log Internal Interface
+     */
     private void createLogIFrame(int width, int height) {
         LogIFrame logIFrame = new LogIFrame(width, height);
         logIFrame.setLocation(w - width - 15, h - height - 60);
@@ -171,15 +188,25 @@ public class MainFrame extends JFrame {
         desktopPane.add(logIFrame);
     }
 
+    /**
+     * Center the Internal Interface
+     */
     private void centerJIF(JInternalFrame iFrame) {
         iFrame.setLocation((desktopPane.getWidth() - iFrame.getWidth()) / 2,
                 (desktopPane.getHeight() - iFrame.getHeight()) / 2);
     }
 
+    /**
+     * Add "fixed" as a property for dragMode
+     */
     private void fixIFrame(JInternalFrame iFrame) {
         iFrame.putClientProperty("dragMode", "fixed");
     }
 
+    /**
+     * Select the Internal Interface by looping and finding it from all the
+     * frames
+     */
     private void selectIFrame(Class<?> cls) {
         for (JInternalFrame frame : desktopPane.getAllFrames()) {
             if (cls.isInstance(frame)) {
@@ -192,6 +219,10 @@ public class MainFrame extends JFrame {
         }
     }
 
+    /**
+     * @param multi enable or disable MultiSelection
+     * @return JFilechooser with image filter
+     */
     public static JFileChooser getImageFileChooser(boolean multi) {
         fileChooser.setMultiSelectionEnabled(multi);
         fileChooser.setAcceptAllFileFilterUsed(false);
@@ -199,6 +230,9 @@ public class MainFrame extends JFrame {
         return fileChooser;
     }
 
+    /**
+     * @return JFilechooser with no filters
+     */
     public static JFileChooser getMNISTFileChooser() {
         fileChooser.setMultiSelectionEnabled(false);
         fileChooser.setAcceptAllFileFilterUsed(true);
@@ -206,7 +240,12 @@ public class MainFrame extends JFrame {
         return fileChooser;
     }
 
-    public static void main(String[] args) throws IOException {
+    /**
+     * Main Function
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             fileChooser = new JFileChooser();
@@ -220,11 +259,16 @@ public class MainFrame extends JFrame {
         });
     }
 
+    /**
+     * Updating UI of a component with different UI
+     *
+     * @param c Component to update
+     * @param includeParent Include Parent or no
+     */
     private static void updateFileChooserUI(JComponent c, boolean includeParent) {
         if (includeParent) {
             c.updateUI();
         }
-
         for (int i = 0; i < c.getComponentCount(); i++) {
             Component child = c.getComponent(i);
             if (child instanceof JComponent) {
