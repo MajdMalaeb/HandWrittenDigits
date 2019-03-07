@@ -8,12 +8,13 @@ Written in java/swing. Using k-nearest neighbors algorithm with Euclidean or Man
 ## Installation
 
 ```sh
-Use Netbeans to open the project or copy the src folder to your project
+-Run HWML.jar in the build folder
+-Or Use Netbeans to open the project and run it
 ```
 
 ## Usage example
 
-1: Uploads image(s) of a handwritten digit for recognition
+1: Upload image(s) of a handwritten digit for recognition
 
 2: Draw a digit using mouse inside the source frame
 
