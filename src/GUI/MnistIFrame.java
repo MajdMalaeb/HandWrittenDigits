@@ -483,7 +483,7 @@ public class MnistIFrame extends JInternalFrame {
                 + separator
                 + "K: " + knn.getK()
                 + separator
-                + "Methode: " + knn.getMethod().name()
+                + "Method: " + knn.getMethod().name()
                 + separator
                 + "Time: " + time;
     }
